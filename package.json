@@ -1,4 +1,15 @@
 {
+  "name": "my-login-app",
+  "version": "1.0.0",
+  "description": "Login app with React and Node.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "install-all": "npm install && cd backend && npm install"
+  },
+  "engines": {
+    "node": "18"
+  },
   "dependencies": {
     "react-router-dom": "^7.13.2"
   }

@@ -2,17 +2,12 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express(); // creates your web server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // ── Middleware (runs on every request before routes) ──────────
 
-// Allow React app on port 3000 to make requests here
-app.use(
-  cors({
-    origin: "https://your-vercel-url.vercel.app",
-    credentials: true,
-  }),
-);
+// Allow requests from any origin (for development/deployment)
+app.use(cors());
 
 // Automatically parse JSON request bodies
 // Without this: req.body is undefined
