@@ -2,7 +2,6 @@ console.log("🚀 Starting server...");
 
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,19 +27,6 @@ console.log("✅ Routes loaded");
 app.get("/api/health", (req, res) => {
   res.json({ message: "Server is running!" });
 });
-
-// ── Frontend (IMPORTANT FIX HERE) ─────────────────────────────
-const frontendPath = path.join(__dirname, "../frontend/build");
-
-// Serve static files
-app.use(express.static(frontendPath));
-
-// SPA fallback (for React routing)
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
-
-console.log("✅ Frontend static files configured");
 
 // ── Start server ──────────────────────────────────────────────
 app.listen(PORT, () => {
