@@ -1,3 +1,5 @@
+console.log("🚀 Starting server...");
+
 const express = require("express");
 const cors = require("cors");
 
@@ -18,11 +20,14 @@ app.use(express.json());
 
 // Initialize database first
 const db = require("./database/init");
+console.log("✅ DB loaded");
 
-// All routes in api.js will start with /api
-// e.g. /signup inside api.js becomes /api/signup
 const apiRoutes = require("./routes/api");
+const authRoutes = require("./routes/auth");
+
 app.use("/api", apiRoutes);
+app.use("/api", authRoutes);
+console.log("✅ Routes loaded");
 
 // Simple test route
 app.get("/", (req, res) => {

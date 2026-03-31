@@ -28,16 +28,32 @@ router.get("/dashboard", (req, res) => {
     );
     const user = decoded;
 
-    res.json({
-      message: "Welcome to your dashboard!",
-      user: { id: user.userId, email: user.email },
-      data: {
-        totalUsers: db.prepare("SELECT COUNT(*) as count FROM users").get()
-          .count,
-        userCreatedAt: db
-          .prepare("SELECT created_at FROM users WHERE id = ?")
-          .get(user.userId)?.created_at,
-      },
+    // Async DB queries
+    db.get("SELECT COUNT(*) as count FROM users", (err, totalResult) => {
+      if (err) {
+        console.error("Total users query error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      db.get(
+        "SELECT created_at FROM users WHERE id = ?",
+        [user.userId],
+        (err2, createdResult) => {
+          if (err2) {
+            console.error("Created at query error:", err2);
+            return res.status(500).json({ error: "Database error" });
+          }
+
+          res.json({
+            message: "Welcome to your dashboard!",
+            user: { id: user.userId, email: user.email },
+            data: {
+              totalUsers: totalResult.count,
+              userCreatedAt: createdResult?.created_at || "Unknown",
+            },
+          });
+        },
+      );
     });
   } catch (error) {
     res.status(401).json({ error: "Invalid or expired token" });

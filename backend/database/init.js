@@ -1,25 +1,25 @@
-// Import the SQLite library we installed
-const Database = require("better-sqlite3");
+const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-// Open (or create) a file called database.sqlite
-// path.join makes sure the path works on all operating systems
-const db = new Database(path.join(__dirname, "..", "database.sqlite"));
+const dbPath = path.join(__dirname, "..", "database.sqlite");
 
-// WAL mode = better performance. Always add this for SQLite.
-db.pragma("journal_mode = WAL");
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error("Database error:", err.message);
+  } else {
+    console.log("Connected to SQLite database");
+  }
+});
 
-// Create the users table if it doesn't exist yet
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    email    TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-
-console.log("Database ready!");
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+});
 
 module.exports = db;
