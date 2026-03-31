@@ -36,7 +36,7 @@ const frontendPath = path.join(__dirname, "../frontend/build");
 app.use(express.static(frontendPath));
 
 // SPA fallback (for React routing)
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
