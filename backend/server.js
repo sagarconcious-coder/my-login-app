@@ -7,7 +7,12 @@ const PORT = 5000;
 // ── Middleware (runs on every request before routes) ──────────
 
 // Allow React app on port 3000 to make requests here
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://your-vercel-url.vercel.app",
+    credentials: true,
+  }),
+);
 
 // Automatically parse JSON request bodies
 // Without this: req.body is undefined
