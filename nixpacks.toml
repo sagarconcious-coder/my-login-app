@@ -1,14 +1,5 @@
 [build]
-nixPackages = ["nodejs_18"]
-
-[build.variables]
-BUN_INSTALL = "/root/.bun"
-
-[[build.commands]]
-heroku = "cd backend && npm install"
-
-[[build.commands]]
-nixpacks = "cd backend && npm run build"
+cmds = ["cd backend && npm install"]
 
 [start]
 cmd = "cd backend && npm start"
