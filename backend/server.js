@@ -2,39 +2,47 @@ console.log("🚀 Starting server...");
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
-const app = express(); // creates your web server
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ── Middleware (runs on every request before routes) ──────────
-
-// Allow requests from any origin (for development/deployment)
+// ── Middleware ────────────────────────────────────────────────
 app.use(cors());
-
-// Automatically parse JSON request bodies
-// Without this: req.body is undefined
-// With this: req.body.email works correctly
 app.use(express.json());
 
-// ── Routes ────────────────────────────────────────────────────
-
-// Initialize database first
-const db = require("./database/init");
+// ── Database ──────────────────────────────────────────────────
+require("./database/init");
 console.log("✅ DB loaded");
 
+// ── Routes ────────────────────────────────────────────────────
 const apiRoutes = require("./routes/api");
 const authRoutes = require("./routes/auth");
 
 app.use("/api", apiRoutes);
 app.use("/api", authRoutes);
+
 console.log("✅ Routes loaded");
 
-// Simple test route
-app.get("/", (req, res) => {
+// ── Health check ──────────────────────────────────────────────
+app.get("/api/health", (req, res) => {
   res.json({ message: "Server is running!" });
 });
 
-// ── Start ─────────────────────────────────────────────────────
+// ── Frontend (IMPORTANT FIX HERE) ─────────────────────────────
+const frontendPath = path.join(__dirname, "../frontend/build");
+
+// Serve static files
+app.use(express.static(frontendPath));
+
+// SPA fallback (for React routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
+});
+
+console.log("✅ Frontend static files configured");
+
+// ── Start server ──────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
